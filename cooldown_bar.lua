@@ -37,7 +37,7 @@ local BAR_SETUP = {
 },
 ["Druid"] = {
 				{ name = "PvP Trinket", icon = PVP_TRINKET_TEXTURE },
-				{ name = "Barkskin", icon = select(3,GetSpellInfo(6552)), cooldown=60 },
+				{ name = "Barkskin", icon = select(3,GetSpellInfo(22812)), cooldown=60 },
 			
 },
 ["Paladin"] = {
