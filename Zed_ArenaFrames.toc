@@ -1,0 +1,10 @@
+## Interface: 30300
+## Title: Zed_ArenaFrames
+## Author: Zedar
+## SavedVariables: Zed_ArenaFramesDB
+
+core.lua
+cooldown_tracker.lua 
+cooldown_bar.lua
+instant_cast_icon.lua
+arena_debuffs.lua
