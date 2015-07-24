@@ -519,7 +519,10 @@ self:InitializeInstantCastIcons()
 
 Zed_ArenaFrames:InitializeDebuffs()
 Zed_ArenaFrames:UpdateDebuffFrames()
+Zed_ArenaFrames:InitHighlight()
+Zed_ArenaFrames:InitFocusHighlight()
 Zed_ArenaFrames:ClassColorHealth(self.DB.classcolor )
+Zed_ArenaFrames:AddFontOptions()
 Zed_ArenaFrames:AddMenuOption({text="Reset settings (reloads UI)", func=function() self.LoadDefaults() ReloadUI() end	})
 end 
 
@@ -587,4 +590,164 @@ petframe:Hide()
 end 
 end 
 
+local function GetFontOption(font)
+return {	text = tostring(font),
+			func = function(...)Zed_ArenaFramesDB.NameFont = font Zed_ArenaFrames:SetNameFont(font) end,
+			checked = function() return (Zed_ArenaFramesDB.NameFont  == font or nil)  end ,
+			keepShownOnClick = 1,
+	}
+end 
 
+function Zed_ArenaFrames:SetNameFont(font)
+for i=1,5 do 
+local frame = _G["ArenaEnemyFrame"..i]
+local name = _G["ArenaEnemyFrame"..i].name 
+local fontName, fontHeight, fontFlags = name:GetFont()
+name:SetFont(fontName, font)
+end 
+end 
+
+local function populateFontOptions()
+local t = {}
+for i=4,16,2 do 
+tinsert(t, GetFontOption(i))
+end 
+return t 
+end 
+
+function Zed_ArenaFrames:AddFontOptions()
+Zed_ArenaFramesDB.NameFont  = Zed_ArenaFramesDB.NameFont or select(2,ArenaEnemyFrame1.name:GetFont())
+local options = { text="Arena Name Size", hasArrow=true, menuList = populateFontOptions() }
+self:AddMenuOption(options)
+
+Zed_ArenaFrames:SetNameFont(Zed_ArenaFramesDB.NameFont)
+end 
+
+local HIGHLIGHT_COLOR = {0.8,0.8,0.1, }
+
+local PlayerTarget_Frame={}
+
+for i=1,5 do 
+local frame = _G["ArenaEnemyFrame"..i]
+PlayerTarget_Frame["arena"..i] = frame
+end
+
+function Zed_ArenaFrames:InitHighlight()
+Zed_ArenaFrames.Highlight = {}
+Zed_ArenaFrames.Highlight.frame = CreateFrame("Frame",nil, ArenaEnemyFrames)
+local highlight = Zed_ArenaFrames.Highlight.frame
+highlight:SetSize(ArenaEnemyFrame1:GetSize())
+highlight:SetScale(ArenaEnemyFrame1:GetScale())
+highlight:SetFrameStrata("LOW")
+highlight:SetAlpha(0.2)
+highlight.texture = highlight:CreateTexture()
+highlight.texture:SetTexture(unpack(HIGHLIGHT_COLOR))
+highlight.texture:SetAllPoints(highlight)
+highlight.texture:SetDrawLayer("BACKGROUND")
+highlight:SetScript("OnEvent", function(self)
+for i=1,5 do
+local arenaUnit= "arena"..i
+if UnitIsUnit("target", arenaUnit) then 
+self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
+self:Show()
+break 
+end 
+self:Hide()
+end 
+end)
+highlight:SetScript("OnShow", function(self)
+for i=1,5 do
+local arenaUnit= "arena"..i
+if UnitIsUnit("target", arenaUnit) then 
+self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
+self:Show()
+break 
+end 
+self:Hide()
+end 
+end)
+highlight:Hide()
+
+Zed_ArenaFramesDB.Highlight  = Zed_ArenaFramesDB.Highlight or false 
+local options = { text="Arena Target Highlight", 
+func = function(...) local bool = select(4,...) Zed_ArenaFramesDB.Highlight = bool Zed_ArenaFrames:ToggleHighlight(bool) end,
+ keepShownOnClick = 1,
+checked = function() return (Zed_ArenaFramesDB.Highlight  == true or nil)  end ,
+}
+self:AddMenuOption(options)
+self:ToggleHighlight() 
+end 
+
+
+function Zed_ArenaFrames:ToggleHighlight(bool) 
+local bool = bool or Zed_ArenaFramesDB.Highlight
+local highlight = Zed_ArenaFrames.Highlight.frame
+if  bool == true then 
+highlight:Show()
+highlight:RegisterEvent("PLAYER_TARGET_CHANGED")
+else 
+highlight:UnregisterEvent("PLAYER_TARGET_CHANGED")
+highlight:Hide()
+end 
+end 
+
+
+local FOCUS_HIGHLIGHT_COLOR = {0.8,0.1,0.1, }
+
+function Zed_ArenaFrames:InitFocusHighlight()
+Zed_ArenaFrames.FocusHighlight = {}
+Zed_ArenaFrames.FocusHighlight.frame = CreateFrame("Frame",nil, ArenaEnemyFrames)
+local focus_highlight = Zed_ArenaFrames.FocusHighlight.frame
+focus_highlight:SetSize(ArenaEnemyFrame1:GetSize())
+focus_highlight:SetScale(ArenaEnemyFrame1:GetScale())
+focus_highlight:SetFrameStrata("LOW")
+focus_highlight:SetAlpha(0.2)
+focus_highlight.texture = focus_highlight:CreateTexture()
+focus_highlight.texture:SetTexture(unpack(FOCUS_HIGHLIGHT_COLOR))
+focus_highlight.texture:SetAllPoints(focus_highlight)
+focus_highlight.texture:SetDrawLayer("BACKGROUND")
+focus_highlight:SetScript("OnEvent", function(self)
+for i=1,5 do
+local arenaUnit= "arena"..i
+if UnitIsUnit("focus", arenaUnit) then 
+self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
+self:Show()
+break 
+end 
+self:Hide()
+end 
+end)
+focus_highlight:SetScript("OnShow", function(self)
+for i=1,5 do
+local arenaUnit= "arena"..i
+if UnitIsUnit("focus", arenaUnit) then 
+self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
+self:Show()
+break 
+end 
+self:Hide()
+end 
+end)
+focus_highlight:Hide()
+Zed_ArenaFramesDB.FocusHighlight  = Zed_ArenaFramesDB.FocusHighlight or false 
+local options = { text="Arena Focus Highlight", 
+func = function(...) local bool = select(4,...) Zed_ArenaFramesDB.FocusHighlight = bool Zed_ArenaFrames:ToggleFocusHighlight(bool) end,
+ keepShownOnClick = 1,
+checked = function() return (Zed_ArenaFramesDB.FocusHighlight  == true or nil)  end ,
+}
+self:AddMenuOption(options)
+self:ToggleFocusHighlight() 
+end 
+
+
+function Zed_ArenaFrames:ToggleFocusHighlight(bool) 
+local bool = bool or Zed_ArenaFramesDB.FocusHighlight
+local highlight = Zed_ArenaFrames.FocusHighlight.frame
+if  bool == true then 
+highlight:Show()
+highlight:RegisterEvent("PLAYER_FOCUS_CHANGED")
+else 
+highlight:UnregisterEvent("PLAYER_FOCUS_CHANGED")
+highlight:Hide()
+end 
+end 
