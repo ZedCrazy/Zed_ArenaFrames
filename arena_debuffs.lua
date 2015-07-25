@@ -1,6 +1,8 @@
 
 
 
+local debuffCache = {}
+
 
 
 function Zed_ArenaFrames:DebuffAnchorTemplate(debuffFrame)
@@ -30,11 +32,20 @@ end
 end 
 
 local function debuff_option_toggle(name, boolean)
+if boolean == true then 
 return {	text = name,
-			func = function(...)Zed_ArenaFramesDB.Debuffs.Enabled = boolean end,
-			checked = function() if Zed_ArenaFramesDB.Debuffs.Enabled  == boolean then return true end end ,
-			 keepShownOnClick = 1,
-	}
+func = function(...) Zed_ArenaFrames:EnableDebuffs() end,
+checked = function() if Zed_ArenaFramesDB.Debuffs.Enabled  == true then return true end end ,
+keepShownOnClick = 1,
+}
+else 
+return {	text = name,
+func = function(...) Zed_ArenaFrames:DisableDebuffs() end,
+checked = function() if Zed_ArenaFramesDB.Debuffs.Enabled  == false then return true end end ,
+keepShownOnClick = 1,
+}
+
+end 
 end 
 local function filterOption_player()
 return {	text = "Show player debuffs only",
@@ -152,12 +163,18 @@ end
 function Zed_ArenaFrames:InitializeDebuffs()
 Zed_ArenaFrames.Debuffs = {}
 Zed_ArenaFrames.Debuffs.IconDisplay = {}
+
+if not Zed_ArenaFramesDB.Debuffs then 
+
 Zed_ArenaFramesDB.Debuffs.maxDebuffs = Zed_ArenaFramesDB.Debuffs.maxDebuffs or 10 
 Zed_ArenaFramesDB.Debuffs.db_per_row = Zed_ArenaFramesDB.Debuffs.db_per_row or 5 
 Zed_ArenaFramesDB.Debuffs.db_size = Zed_ArenaFramesDB.Debuffs.db_size or 15 
 Zed_ArenaFramesDB.Debuffs.X = Zed_ArenaFramesDB.Debuffs.X  or 0 
 Zed_ArenaFramesDB.Debuffs.Y= Zed_ArenaFramesDB.Debuffs.Y or -15
-Zed_ArenaFramesDB.Debuffs.Enabled = Zed_ArenaFramesDB.Debuffs.Enabled or true 
+Zed_ArenaFramesDB.Debuffs.Enabled  = true 
+end 
+
+
 
 local size = Zed_ArenaFramesDB.Debuffs.db_size
 local maxDebuffs = Zed_ArenaFramesDB.Debuffs.maxDebuffs
@@ -169,6 +186,7 @@ for i=1,maxDebuffs do
 local DebuffFrameName = "ArenaEnemyFrame"..a.."Debuff"
 local DebuffFrame_name_i = "ArenaEnemyFrame"..a.."Debuff"..i 
 local debuffIcon = CreateFrame("Frame",DebuffFrame_name_i,frame)		--"TargetBuffFrameTemplate")
+debuffCache[debuffIcon] = true 
 debuffIcon:EnableMouse(false)
 debuffIcon:SetSize(size,size)
 self.Debuffs.IconDisplay[debuffIcon] = self:DebuffAnchorTemplate(debuffIcon)
@@ -206,17 +224,18 @@ end
 end)
 
 --------------------------------
+--[[
 frame:HookScript("OnShow", function(self)
 if Zed_ArenaFramesDB.Debuffs.Enabled == true then 
 self:RegisterEvent("UNIT_AURA")
 end 
 end)
 frame:HookScript("OnHide", function(self)
-if Zed_ArenaFramesDB.Debuffs.Enabled == true then 
+if Zed_ArenaFramesDB.Debuffs.Enabled == false then 
 self:UnregisterEvent("UNIT_AURA")
 end 
 end)
-
+]]--
 end
 
 local debuff_options = { text="Arena Debuffs",  hasArrow = true, menuList = {	
@@ -346,6 +365,7 @@ end
 
  
 function Zed_ArenaFrames:UpdateDebuffs(frame,unit, maxDebuffs, suffix)
+if Zed_ArenaFramesDB.Debuffs.Enabled == false then return end 
 local filterOpt = Zed_ArenaFramesDB.Debuffs.filter 
 local maxDebuffs = Zed_ArenaFramesDB.Debuffs.maxDebuffs
 RefreshDebuffs(frame,unit, maxDebuffs, suffixfilter, filterOpt)
