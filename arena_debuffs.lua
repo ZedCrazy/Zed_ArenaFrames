@@ -3,7 +3,11 @@
 
 local debuffCache = {}
 
-
+function Zed_ArenaFrames:HideDebuffIcons()
+for icon,_ in pairs(debuffCache) do
+icon:Hide()
+end 
+end 
 
 function Zed_ArenaFrames:DebuffAnchorTemplate(debuffFrame)
 local displayIcon = CreateFrame("Frame", nil, UIParent)
@@ -382,6 +386,7 @@ end
 end 
 
 function Zed_ArenaFrames:DisableDebuffs()
+Zed_ArenaFrames:HideDebuffIcons()
 Zed_ArenaFramesDB.Debuffs.Enabled = false  
 for a=1,5 do
 local frame = _G["ArenaEnemyFrame"..a]
