@@ -571,6 +571,7 @@ end
 self:Hide()
 end 
 end)
+--[[
 highlight:SetScript("OnShow", function(self)
 for i=1,5 do
 local arenaUnit= "arena"..i
@@ -580,7 +581,7 @@ break
 end 
 self:Hide()
 end 
-end)
+end)]]--
 highlight:Hide()
 
 Zed_ArenaFramesDB.Highlight  = Zed_ArenaFramesDB.Highlight or false 
@@ -626,11 +627,13 @@ for i=1,5 do
 local arenaUnit= "arena"..i
 if UnitIsUnit("focus", arenaUnit) then 
 self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
+self:Show()
 break 
 end 
 self:Hide()
 end 
 end)
+--[[
 focus_highlight:SetScript("OnShow", function(self)
 for i=1,5 do
 local arenaUnit= "arena"..i
@@ -642,6 +645,7 @@ end
 self:Hide()
 end 
 end)
+]]--
 focus_highlight:Hide()
 Zed_ArenaFramesDB.FocusHighlight  = Zed_ArenaFramesDB.FocusHighlight or false 
 local options = { text="Arena Focus Highlight", 
