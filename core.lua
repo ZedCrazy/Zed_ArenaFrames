@@ -42,6 +42,7 @@ SIZE= 25,
 }
 
 function Zed_ArenaFrames:LoadDefaults()
+print("Zed_ArenaFrames: loaded defaults")
 Zed_ArenaFramesDB = {}
 Zed_ArenaFramesDB.UnitFrames = {}
 for i=1,#Zed_ArenaFrames.frames do 
@@ -59,6 +60,7 @@ filter = "none",
 }
 Zed_ArenaFramesDB.classcolor = false 
 Zed_ArenaFramesDB.Color = {}
+Zed_ArenaFrames.DB = Zed_ArenaFramesDB
 end 
 local options = Zed_ArenaFramesDB
 
@@ -386,12 +388,15 @@ end
 function Zed_ArenaFrames:ADDON_LOADED(arg)
 if not arg == self:GetName() then  return end 
 self:UnregisterEvent("ADDON_LOADED")
-self.DB = Zed_ArenaFramesDB or self:LoadDefaults()
 
-local savedvariable = self.DB
-if not savedvariable then Zed_ArenaFrames:LoadDefaults() end 
+if  not Zed_ArenaFramesDB  then 
+self:LoadDefaults()
+end 
+local savedvariable = Zed_ArenaFramesDB
+
+self.DB = Zed_ArenaFramesDB
 if savedvariable then 
-for frame, options in pairs(self.DB.UnitFrames) do 
+for frame, options in pairs(savedvariable.UnitFrames) do 
 frame_ref = _G[frame] 
 
  
@@ -432,7 +437,6 @@ SLASH_AEF2 = "/zaf"
 
 self.CD:CreateBars()
 self:InitializeInstantCastIcons()
-
 Zed_ArenaFrames:InitializeDebuffs()
 Zed_ArenaFrames:UpdateDebuffFrames()
 Zed_ArenaFrames:InitHighlight()
