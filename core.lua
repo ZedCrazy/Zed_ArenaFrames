@@ -1,5 +1,5 @@
 LoadAddOn("Blizzard_ArenaUI")
-
+UIDROPDOWNMENU_SHOW_TIME = 60 -- extent time menu is shown 
 
 local UnitExists = UnitExists
 local UnitName = UnitName 
