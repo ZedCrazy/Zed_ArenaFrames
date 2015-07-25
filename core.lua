@@ -576,7 +576,6 @@ for i=1,5 do
 local arenaUnit= "arena"..i
 if UnitIsUnit("target", arenaUnit) then 
 self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
-self:Show()
 break 
 end 
 self:Hide()
@@ -627,7 +626,6 @@ for i=1,5 do
 local arenaUnit= "arena"..i
 if UnitIsUnit("focus", arenaUnit) then 
 self:SetPoint("CENTER", PlayerTarget_Frame[arenaUnit])
-self:Show()
 break 
 end 
 self:Hide()
