@@ -167,16 +167,16 @@ end
 function Zed_ArenaFrames:InitializeDebuffs()
 Zed_ArenaFrames.Debuffs = {}
 Zed_ArenaFrames.Debuffs.IconDisplay = {}
-
-if not Zed_ArenaFramesDB.Debuffs then 
-
-Zed_ArenaFramesDB.Debuffs.maxDebuffs = Zed_ArenaFramesDB.Debuffs.maxDebuffs or 10 
-Zed_ArenaFramesDB.Debuffs.db_per_row = Zed_ArenaFramesDB.Debuffs.db_per_row or 5 
-Zed_ArenaFramesDB.Debuffs.db_size = Zed_ArenaFramesDB.Debuffs.db_size or 15 
-Zed_ArenaFramesDB.Debuffs.X = Zed_ArenaFramesDB.Debuffs.X  or 0 
-Zed_ArenaFramesDB.Debuffs.Y= Zed_ArenaFramesDB.Debuffs.Y or -15
-Zed_ArenaFramesDB.Debuffs.Enabled  = true 
-end 
+Zed_ArenaFramesDB.Debuffs = Zed_ArenaFramesDB.Debuffs or 
+{
+filter = "none",
+maxDebuffs =  10 ,
+db_per_row =  5 ,
+db_size = 15 ,
+X = 0 ,
+Y = -15,
+Enabled  = true ,
+}
 
 
 
@@ -189,7 +189,7 @@ for i=1,maxDebuffs do
 
 local DebuffFrameName = "ArenaEnemyFrame"..a.."Debuff"
 local DebuffFrame_name_i = "ArenaEnemyFrame"..a.."Debuff"..i 
-local debuffIcon = CreateFrame("Frame",DebuffFrame_name_i,frame)		--"TargetBuffFrameTemplate")
+local debuffIcon = CreateFrame("Frame",DebuffFrame_name_i,frame)	
 debuffCache[debuffIcon] = true 
 debuffIcon:EnableMouse(false)
 debuffIcon:SetSize(size,size)
