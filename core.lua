@@ -54,10 +54,7 @@ size = 25,
 enabled = true,
 
 }
-Zed_ArenaFramesDB.Debuffs = {
-filter = "none",
 
-}
 Zed_ArenaFramesDB.classcolor = false 
 Zed_ArenaFramesDB.Color = {}
 Zed_ArenaFrames.DB = Zed_ArenaFramesDB
